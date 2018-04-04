@@ -16,3 +16,63 @@ def get_abstracts_txt(year='2017',month='01'):
         fil.write(txt)
     print("Done download for year {} month {}".format(year,month))
     return
+
+def br2spc(str):
+    """ Replaces \n with space and strips spaces from start and end."""
+    return str.replace("\n",' ').strip(' ')
+
+def get_record(p,k1,k2):
+    """ Returns string between k1 and k2 in the text p"""
+    try:
+        return br2spc(p.split(k1)[1].split(k2)[0]).replace('                      ',' ')
+    except:
+        return ''
+
+
+def get_pubs_dict(
+    fnames = ['data/abstracts_2017_01.txt', 'data/abstracts_2017_02.txt', 'data/abstracts_2017_03.txt', 'data/abstracts_2017_04.txt', 'data/abstracts_2017_05.txt', 'data/abstracts_2017_06.txt', 'data/abstracts_2017_07.txt', 'data/abstracts_2017_08.txt', 'data/abstracts_2017_09.txt', 'data/abstracts_2017_10.txt', 'data/abstracts_2017_11.txt', 'data/abstracts_2017_12.txt']
+    ):
+
+    """ 
+        Returns the dictionary of publications from the text files in the fnames list.
+    """
+
+    pubs_dict = {}
+    all_abstracts = []
+    
+    for fname in fnames:
+        with open(fname,'r') as f:
+            txt = f.read()
+    
+
+        pubs = txt.split("Title:")[1:]
+        for p in pubs:
+    
+            try:
+                pub = {}
+                title =       get_record(p,'              ',"Authors:")
+                authors =     get_record(p,"Authors:",'Affiliation:')
+                aff =         get_record(p,"Affiliation:",'Publication:')
+                publication = get_record(p,"Publication:",'Publication Date:')
+                journal = publication.split(',')[0]
+                pub_date =    get_record(p,"Publication Date:",'Origin:')
+                origin =      get_record(p,'Origin:',"Keywords:")
+                keys =        get_record(p,"Keywords:",'Abstract Copyright:')
+                bibcode =     get_record(p,'Bibliographic Code:','Abstract')
+                try:
+                    abs = br2spc(p.split("Abstract")[-1])
+                except:
+                    abs = ''
+      
+#                pub['title'] = title
+#                pub['authors'] = authors
+#                pub['bibcode'] = authors
+                pub['journal'] = journal        
+                pub['abstract'] = abs
+                pubs_dict[bibcode] = pub
+                all_abstracts.append(abs)
+            except Exception as e:
+                print(e)
+#            print(p)
+    
+    return pubs_dict, "".join(all_abstracts)
