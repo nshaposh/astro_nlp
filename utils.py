@@ -3,6 +3,7 @@
 import urllib.request as ul
 from operator import itemgetter
 import matplotlib.pyplot as plt
+import copy
 
 
 def get_abstracts_txt(year='2017',month='01'):
