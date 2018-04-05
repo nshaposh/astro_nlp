@@ -5,6 +5,7 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import copy
 import numpy as np
+import itertools
 
 
 def get_abstracts_txt(year='2017',month='01'):
